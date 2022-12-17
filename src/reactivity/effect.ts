@@ -1,8 +1,10 @@
+import { extend } from "../shared";
 
 class ReactiveEffect {
     private _fn: any
     deps = []
     active = true;
+    onStop?: () => void
 
     constructor(fn, public scheduler?: Function | undefined) {
         this._fn = fn;
@@ -15,10 +17,13 @@ class ReactiveEffect {
     stop() {
         if (this.active) {
             cleanupEffect(this);
+            if (this.onStop) {
+                this.onStop()
+            }
             this.active = false;
         }
     }
-    
+
 }
 function cleanupEffect(effect) {
     effect.deps.forEach((dep: any) => {
@@ -40,6 +45,7 @@ export function track(target, key) {
         dep = new Set();
         depMap.set(key, dep)
     }
+    if(!acitveEffect) return;
     //收集依赖
     dep.add(acitveEffect)
     acitveEffect.deps.push(dep)  //记录当前effect 被收集到哪里
@@ -61,6 +67,10 @@ export function trigger(target, key) {
 let acitveEffect;
 export function effect(fn, options: any = {}) {
     const _effect = new ReactiveEffect(fn, options.scheduler)
+
+    // extend alias Object.assign
+    extend(_effect,options)
+    // _effect.onStop = options.onStop;
     _effect.run()
     const runner: any = _effect.run.bind(_effect)
     runner.effect = _effect;
@@ -69,5 +79,4 @@ export function effect(fn, options: any = {}) {
 
 export function stop(runner) {
     runner.effect.stop()
-
 }

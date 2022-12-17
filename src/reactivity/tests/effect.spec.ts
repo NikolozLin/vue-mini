@@ -67,7 +67,7 @@ describe('effect', () => {
         expect(dummy).toBe(2)
 
     });
-
+ 
 
     it('stop', () => {
         let dummy
