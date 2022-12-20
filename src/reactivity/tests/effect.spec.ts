@@ -81,7 +81,6 @@ describe('effect', () => {
         // obj.prop = 3
         obj.prop ++  //++ 隐含get操作 以来重新收集了
         expect(dummy).toBe(2)
-    
         // stopped effect should still be manually callable
         runner()
         expect(dummy).toBe(3)

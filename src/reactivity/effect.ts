@@ -1,5 +1,8 @@
 import { extend } from "../shared";
 
+
+let acitveEffect;
+let shouleTrack = false;
 class ReactiveEffect {
     private _fn: any
     deps = []
@@ -10,8 +13,14 @@ class ReactiveEffect {
         this._fn = fn;
     }
     run() {
+        if (!this.active) {  //如果 执行了stop  走下面流程
+            return this._fn();
+        }
         acitveEffect = this;
-        return this._fn();
+        shouleTrack = true;
+        const result = this._fn();
+        shouleTrack = false;
+        return result;
 
     }
     stop() {
@@ -33,6 +42,7 @@ function cleanupEffect(effect) {
 
 const targetMap = new Map();
 export function track(target, key) {
+    if (!isTracking()) return;
     // 需要容器暂存依赖
     // target -> key -> key
     let depMap = targetMap.get(target)
@@ -45,12 +55,17 @@ export function track(target, key) {
         dep = new Set();
         depMap.set(key, dep)
     }
-    if(!acitveEffect) return;
+
+
     //收集依赖
+    if(dep.has(acitveEffect))return;
     dep.add(acitveEffect)
     acitveEffect.deps.push(dep)  //记录当前effect 被收集到哪里
 }
 
+function isTracking() {
+    return shouleTrack && acitveEffect !== undefined;
+}
 export function trigger(target, key) {
     let depMap = targetMap.get(target)
     let dep = depMap.get(key);
@@ -64,12 +79,11 @@ export function trigger(target, key) {
     }
 }
 
-let acitveEffect;
 export function effect(fn, options: any = {}) {
     const _effect = new ReactiveEffect(fn, options.scheduler)
 
     // extend alias Object.assign
-    extend(_effect,options)
+    extend(_effect, options)
     // _effect.onStop = options.onStop;
     _effect.run()
     const runner: any = _effect.run.bind(_effect)
