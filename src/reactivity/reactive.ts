@@ -17,6 +17,11 @@ function createActiveObject(raw: any, baseHandlers) {
 
 }
 
+export function isProxy (value)  {
+    //只有是proxy 对象 才能再handler代理对象中取得两个标签值
+    return isReadonly(value) || isReactive(value);
+
+}
 
 
 export function reactive(raw) {
@@ -31,3 +36,4 @@ export function shallowReadonly(raw) {
     return createActiveObject(raw, shallowReadonlyHandlers)
 
 }
+
