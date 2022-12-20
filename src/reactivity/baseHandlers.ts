@@ -1,5 +1,6 @@
+import { isObject } from "../shared";
 import { track, trigger, } from "./effect"
-import { ReactiveFlags } from "./reactive";
+import { reactive, ReactiveFlags, readonly } from "./reactive";
 
 const get = createGetter();
 const set = createSetter();
@@ -7,12 +8,17 @@ const readonlyGet = createGetter(true);
 
 function createGetter(isReadonly = false) {
     return function get(target, key) {
-        const res = Reflect.get(target, key)
+       
         if (key === ReactiveFlags.IS_REACTIVE) {
-
             return !isReadonly
         } else if (key === ReactiveFlags.IS_READONLY) {
             return isReadonly
+        }   
+        const res = Reflect.get(target, key)  
+        
+        // 允许嵌套 reactive对象，所以需要 如果取的值 res 是对象需要调用reactive()方法
+        if(isObject(res)) {
+            return isReadonly?readonly(res): reactive(res)
         }
 
         if (!isReadonly) {
