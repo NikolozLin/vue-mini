@@ -56,20 +56,32 @@ export function track(target, key) {
         depMap.set(key, dep)
     }
 
-
-    //收集依赖
-    if(dep.has(acitveEffect))return;
-    dep.add(acitveEffect)
-    acitveEffect.deps.push(dep)  //记录当前effect 被收集到哪里
+    trackEffects(dep)
 }
 
-function isTracking() {
+export function trackEffects(dep){
+     //收集依赖
+     if(dep.has(acitveEffect))return;
+     dep.add(acitveEffect)
+     acitveEffect.deps.push(dep)  //记录当前effect 被收集到哪里
+}
+
+/**
+ * 判断当前是否有活动的 effect 需要收集
+ * @returns 
+ */
+export function isTracking() {
     return shouleTrack && acitveEffect !== undefined;
 }
+
 export function trigger(target, key) {
     let depMap = targetMap.get(target)
     let dep = depMap.get(key);
 
+    triggerEffect(dep)
+}
+
+export function triggerEffect(dep){
     for (const effect of dep) {
         if (effect.scheduler) {
             effect.scheduler()
@@ -78,7 +90,6 @@ export function trigger(target, key) {
         }
     }
 }
-
 export function effect(fn, options: any = {}) {
     const _effect = new ReactiveEffect(fn, options.scheduler)
 
