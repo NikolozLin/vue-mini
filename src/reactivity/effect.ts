@@ -3,7 +3,7 @@ import { extend } from "../shared";
 
 let acitveEffect;
 let shouleTrack = false;
-class ReactiveEffect {
+export class ReactiveEffect {
     private _fn: any
     deps = []
     active = true;
