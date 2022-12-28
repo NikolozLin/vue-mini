@@ -2,7 +2,8 @@ export function createComponentInstance(vnode) {
 
     const component = {
         vnode,
-        type: vnode.type
+        type: vnode.type,
+        setupState: {}
     }
     return component;
 }
@@ -21,6 +22,19 @@ export function setupComponent(instance) {
 function setupStatefulComponent(instance: any) {
 
     const Component = instance.type;
+
+    //ctx
+    instance.proxy = new Proxy({}, {
+        get(target, key) {
+            //从setupState取值
+            const { setupState } = instance;
+            if (key in setupState) {
+                 return setupState[key];
+            }
+
+        }
+    })
+
 
     const { setup } = Component;
     if (setup) {
@@ -43,7 +57,7 @@ function handleSetupResult(instance, setupResult: any) {
 function finishComponentSetup(instance: any) {
     const Component = instance.type;
     // if (Component.render) { // 当前只有runtim-core 假设他必定有值
-        instance.render = Component.render;
+    instance.render = Component.render;
     // }
 }
 
