@@ -1,12 +1,14 @@
+import { h } from "../../lib/guide-mini-vue.esm.js";
+
 export const App = {
-    runder(){
-        return  h("div",'hi,'+this.msg)
+    render() {
+        return h("div", 'hi,' + this.msg)
 
-    }
+    },
 
-    setup(){
+    setup() {
         return {
-            msg:'mini-vue'
+            msg: 'mini-vue'
         }
     }
 }
