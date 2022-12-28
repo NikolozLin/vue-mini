@@ -58,7 +58,8 @@ function mountComponent(vnode: any, container) {
 }
 
 function setupRenderEffect(instance, container) {
-    const subTree = instance.render();
+    const {proxy}=instance ;// 代理对象 处处setup 的内容
+    const subTree = instance.render.call(proxy);
 
 
     patch(subTree, container)

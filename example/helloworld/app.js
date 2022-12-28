@@ -8,12 +8,14 @@ export const App = {
                 id: "root",
                 class: ["red", "hard"]
             },
-            // 'hi,' + this.msg // string 类型的children
-            //Object类型的children
-            [
-                h('p', { class: 'red' }, 'hi'),
-                h('p', { class: 'blue' }, 'mini-vue'),
-            ]
+            // string 类型的children
+            'hi,' + this.msg 
+            
+            // //Object类型的children
+            // [
+            //     h('p', { class: 'red' }, 'hi'),
+            //     h('p', { class: 'blue' }, 'mini-vue'),
+            // ]
 
 
         )
