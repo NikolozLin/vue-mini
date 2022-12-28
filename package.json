@@ -1,9 +1,8 @@
 {
   "name": "vue-mini",
   "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/lghhhh/vue-mini.git",
-  "author": "linguihao <513279340@qq.com>",
+  "main": "lib/guide-mini-vue.cjs.js",
+  "module": "lib/guide-mini-vue.esm.js",
   "license": "MIT",
   "type": "module",
   "scripts": {
