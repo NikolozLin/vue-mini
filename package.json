@@ -4,10 +4,10 @@
   "main": "lib/guide-mini-vue.cjs.js",
   "module": "lib/guide-mini-vue.esm.js",
   "license": "MIT",
-  "type": "module",
+
   "scripts": {
     "test": "jest",
-    "build": " rollup -c rollup.config.js"
+    "build": " rollup -c rollup.config.mjs"
   },
   "devDependencies": {
     "@babel/core": "^7.20.5",

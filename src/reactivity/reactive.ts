@@ -1,3 +1,4 @@
+import { isObject } from "../shared/index"
 import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from "./baseHandlers"
 import { track, trigger } from "./effect"
 
@@ -12,8 +13,13 @@ export function isReactive(value) { //通过readonly 来判断
 export function isReadonly(value) { //通过readonly 来判断
     return !!value[ReactiveFlags.IS_READONLY]
 }
-function createActiveObject(raw: any, baseHandlers) {
-    return new Proxy(raw, baseHandlers)
+
+function createActiveObject(target, baseHandlers) {
+    if(isObject(target)){
+        console.log(`target ${target} 必须是一个对象`)
+        return
+    }
+    return new Proxy(target, baseHandlers)
 
 }
 
