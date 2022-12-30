@@ -10,7 +10,7 @@ export function createVNode(type, props?, children?) {
     };
 
     //children
-    if (typeof children === 'string') {
+    if (typeof children === 'string') { 
         vnode.shapeFlag = vnode.shapeFlag | ShapeFlags.TEXT_CHILDREN
     }else if (Array.isArray(children)){
         vnode.shapeFlag = vnode.shapeFlag | ShapeFlags.ARRAY_CHILDREN
