@@ -6,29 +6,14 @@ export const App = {
     render() {
         window.self=this; // 测试 this.$el
         return h(
-            "div",
-            {
-                id: "root",
-                class: ["red", "hard"],
-                onClick(){
-                    console.log("click");
-                },
-                onMousedown(){
-                    console.log('mousedown');
-                }
-            },
-            // string 类型的children
-            // 'hi,' + this.msg 
-            
-            // //Object类型的children
-            // [
-            //     h('p', { class: 'red' }, 'hi'),
-            //     h('p', { class: 'blue' }, 'mini-vue'),
-            // ]
-            
+            "div",{},
             [
-                h('div', { class: 'red' }, 'hi'+this.msg),
-                h(Foo,{count:1}),
+                h('div', {}, 'App'),
+                h(Foo,{
+                    onAdd(){
+                        console.log("onAdd")
+                    }
+                }),
             ]
 
 
