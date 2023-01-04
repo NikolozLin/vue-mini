@@ -15,7 +15,7 @@ export function isReadonly(value) { //通过readonly 来判断
 }
 
 function createActiveObject(target, baseHandlers) {
-    if(isObject(target)){
+    if(!isObject(target)){
         console.log(`target ${target} 必须是一个对象`)
         return
     }
