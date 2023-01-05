@@ -1,8 +1,10 @@
 import { createVNode } from "../vnode";
 
-export function renderSlots(slots){
+export function renderSlots(slots, name) {
 
-    // 创建虚拟接点并返回
-    return createVNode('div',{},slots)
-
+    const slot = slots[name]
+    if (slot) {
+        // 创建虚拟接点并返回
+        return createVNode('div', {}, slot)
+    }
 }
