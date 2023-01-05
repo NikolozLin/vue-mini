@@ -11,8 +11,8 @@ export const App = {
         // 当children 是一个数组，Foo需要将数组转化成虚拟节点
         // 具名插槽 children 参数传递Object ，后续可以通过key指定渲染位置
         const foo = h(Foo, {}, {
-            header: h('p', {}, 'header'),
-            footer: h('p', {}, 'footer')
+            header: ({ age }) => h('p', {}, 'header' + age),
+            footer: () => h('p', {}, 'footer')
         })
         return h("div", {}, [app, foo])
 

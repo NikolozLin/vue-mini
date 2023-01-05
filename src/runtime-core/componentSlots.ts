@@ -7,7 +7,7 @@ function normalizeObjectSlots(children, slots) {
     for (const key in children) {
         if (Object.prototype.hasOwnProperty.call(children, key)) {
             const value = children[key];
-            slots[key] = normalizeSlotsValue(value)
+            slots[key] = (props) => normalizeSlotsValue(value(props)) //这里slot 变成 vNode进行存储
 
         }
     }

@@ -8,8 +8,12 @@ export const Foo = {
     },
     render() {
         const foo = h('p', {}, 'foo');
+
+        const age=8;//作用域插槽
         return h('div', {}, [
-            renderSlots(this.$slots, 'header'),
+            renderSlots(this.$slots, 'header',{
+                age
+            }),
             foo, 
             renderSlots(this.$slots, 'footer')
         ]); //最终slot 填充位置为Foo组件的children里面
