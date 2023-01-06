@@ -10,11 +10,19 @@ export function createVNode(type, props?, children?) {
     };
 
     //children
-    if (typeof children === 'string') { 
+    if (typeof children === 'string') {
         vnode.shapeFlag = vnode.shapeFlag | ShapeFlags.TEXT_CHILDREN
-    }else if (Array.isArray(children)){
+    } else if (Array.isArray(children)) {
         vnode.shapeFlag = vnode.shapeFlag | ShapeFlags.ARRAY_CHILDREN
+    }
 
+    // 添加插槽的shapeFlag
+    // 判断是否有 插槽 1.type是组件 2. children 是object对象 
+
+    if (vnode.shapeFlag && ShapeFlags.STATEFUL_COMPONENT) {
+        if (typeof children === 'object') {
+            vnode.shapeFlag |= ShapeFlags.SLOT_CHILDREN;
+        }
     }
     return vnode;
 }
