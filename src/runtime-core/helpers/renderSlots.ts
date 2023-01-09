@@ -1,4 +1,4 @@
-import { createVNode } from "../vnode";
+import { createVNode, Fragment } from "../vnode";
 
 export function renderSlots(slots, name, props) {
 
@@ -8,7 +8,7 @@ export function renderSlots(slots, name, props) {
         // 作用域插槽为了传递参数 ，它的slot 为fucntion
         if (typeof slot === 'function') {
 
-            return createVNode('div', {}, slot(props))
+            return createVNode(Fragment, {}, slot(props))
         }
     }
 }
