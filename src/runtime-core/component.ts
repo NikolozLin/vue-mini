@@ -42,9 +42,12 @@ function setupStatefulComponent(instance: any) {
 
     const { setup } = Component;
     if (setup) {
+        // 不同组件的current不同 就需要在这进行不同的赋值，才能在setup正常使用
+        setCurrentInstance(instance)
         const setupResult = setup(shallowReadonly(instance.props), {
             emit: instance.emit
         });
+        setCurrentInstance(null)//用完清空
         handleSetupResult(instance, setupResult)
     }
 }
@@ -67,3 +70,13 @@ function finishComponentSetup(instance: any) {
     // }
 }
 
+
+let currentInstance=null;
+
+export function getCurrentInstance(){
+ return currentInstance
+}
+
+function setCurrentInstance(instance){
+    currentInstance=instance;
+}
