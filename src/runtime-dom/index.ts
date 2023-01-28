@@ -30,7 +30,7 @@ const renderer:any = createRenderer({
 
 export function createApp(...args) {
 
-    return renderer.createApp(...args);// 这里参数传递到runtime-core 的createApp（）中
+    return renderer.createApp(...args);// 这里参数传递到runtime-core 的createApp（）中 
 }
 
 export * from "../runtime-core";
