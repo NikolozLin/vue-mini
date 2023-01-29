@@ -50,7 +50,7 @@ export function isRef(ref) {
 
 export function unRef(ref) {
 
-    if (isRef(ref)) return ref._rawValue
+    if (isRef(ref)) return ref.value
     return ref
 
 }
