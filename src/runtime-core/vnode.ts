@@ -9,7 +9,7 @@ export function createVNode(type, props?, children?) {
         props,
         children,
         shapeFlag: getShpeFlag(type),
-        el: null
+        el: null // 渲染完成最终在hteml上的元素
     };
 
     //children

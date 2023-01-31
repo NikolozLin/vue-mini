@@ -8,7 +8,7 @@ import { Fragment, Text } from "./vnode";
 
 
 export function createRenderer(options) {
-    const { createElement, patchProps, insert } = options;
+    const { createElement, patchProps:hotPatchProp, insert } = options;
 
     function render(vnode, container) {
         //patch
@@ -61,9 +61,55 @@ export function createRenderer(options) {
         }
     }
 
+    // 更新元素
     function patchElement(n1,n2,container){ 
+        console.log('patchElement');
+
+        const oldProps=n1.props||{}
+        const newProps=n2.props||{}
+
+        
+        const el= n2.el = n1.el;
+
+        patchProps(el,oldProps,newProps)
 
     }
+    function patchProps(el,oldProps,newProps){
+        //检查新增
+        for(const key in newProps){
+            const prevProp=oldProps[key];
+            const nextProp=newProps[key];
+            if(prevProp!==nextProp){
+                hotPatchProp(el,key,prevProp,nextProp)
+            }
+        }
+        // 检查原有的key
+        for(const key in oldProps){
+           
+            if(key!in newProps){
+                hotPatchProp(el,key,oldProps[key],null)
+            }
+
+        }
+
+
+    }
+    // //判断 props 是否有更新
+    // function hasPropsChange(prevProps,nextProps){
+    //     const nextKeys= Object.keys(nextProps);
+
+    //     if(nextKeys.length !== Object.keys(prevProps).length){
+    //         return true
+    //     }
+
+    //     for(let i =0 ;i<nextKeys.length;i++){
+    //         const key =nextKeys[i];
+    //         if(nextProps[key]!== prevProps[key]){
+    //             return true
+    //         }
+    //     }
+    //     return false
+    // }
 
     function mountElement(vnode: any, container: any, parentComponent) {
 
@@ -91,7 +137,7 @@ export function createRenderer(options) {
             //     el.setAttribute(key, val);
             // }
 
-            patchProps(el, key, val);
+            hotPatchProp(el, key, null,val);
         }
 
         // container.append(el)

@@ -49,6 +49,7 @@ function setupStatefulComponent(instance: any) {
     const { setup } = Component;
     if (setup) {
         // 不同组件的current不同 就需要在这进行不同的赋值，才能在setup正常使用
+        //否则 onMounted函数挂载的生命周期等，都会不准确
         setCurrentInstance(instance)
         const setupResult = setup(shallowReadonly(instance.props), {
             emit: instance.emit
