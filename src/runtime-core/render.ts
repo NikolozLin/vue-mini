@@ -8,7 +8,13 @@ import { Fragment, Text } from "./vnode";
 
 
 export function createRenderer(options) {
-    const { createElement, patchProps:hotPatchProp, insert } = options;
+    const { createElement,
+        patchProps: hotPatchProp,
+        insert,
+        setText: hotSetText,
+        setElementText: hotSetElementText,
+        remove: hotRemove
+    } = options;
 
     function render(vnode, container) {
         //patch
@@ -42,52 +48,66 @@ export function createRenderer(options) {
 
     //================================================================
     function processText(n1, n2: any, container: any) {
+        if (n1 == null) {//init
+            const { children } = n2;
+            const textNode = n2.el = document.createTextNode(children)
+            container.append(textNode)
 
-        const { children } = n2;
-        const textNode = n2.el = document.createTextNode(children)
-        container.append(textNode)
+        } else {//update
+            const el = n2.el = n1.el;
+            if (n2.children !== n1.children) {
+                console.log("update Text 类型节点");
+                hotSetText(el, n2.children)
+
+            }
+
+        }
+
+
     }
     function processFragment(n1: any, n2: any, container: any, parentComponent) {
-        mountChildren(n2, container, parentComponent);
+        mountChildren(n2.children, container, parentComponent);
     }
     //================================================================
     function processElement(n1: any, n2: any, container: any, parentComponent) {
 
-        if(!n1){//新增
+        if (!n1) {//新增
             mountElement(n2, container, parentComponent)
 
-        }else{
-            patchElement(n1,n2,container)
+        } else {
+            patchElement(n1, n2, container, parentComponent)
         }
     }
 
     // 更新元素
-    function patchElement(n1,n2,container){ 
+    function patchElement(n1, n2, container, parentComponent) {
         console.log('patchElement');
 
-        const oldProps=n1.props||{}
-        const newProps=n2.props||{}
+        const oldProps = n1.props || {}
+        const newProps = n2.props || {}
 
-        
-        const el= n2.el = n1.el;
 
-        patchProps(el,oldProps,newProps)
+        const el = n2.el = n1.el;
+        // 更新 Props
+        patchProps(el, oldProps, newProps)
 
+        // 更新子节点
+        patchChildren(n1, n2, el, parentComponent)
     }
-    function patchProps(el,oldProps,newProps){
+    function patchProps(el, oldProps, newProps) {
         //检查新增
-        for(const key in newProps){
-            const prevProp=oldProps[key];
-            const nextProp=newProps[key];
-            if(prevProp!==nextProp){
-                hotPatchProp(el,key,prevProp,nextProp)
+        for (const key in newProps) {
+            const prevProp = oldProps[key];
+            const nextProp = newProps[key];
+            if (prevProp !== nextProp) {
+                hotPatchProp(el, key, prevProp, nextProp)
             }
         }
         // 检查原有的key
-        for(const key in oldProps){
-           
-            if(key!in newProps){
-                hotPatchProp(el,key,oldProps[key],null)
+        for (const key in oldProps) {
+
+            if (key! in newProps) {
+                hotPatchProp(el, key, oldProps[key], null)
             }
 
         }
@@ -97,11 +117,9 @@ export function createRenderer(options) {
     // //判断 props 是否有更新
     // function hasPropsChange(prevProps,nextProps){
     //     const nextKeys= Object.keys(nextProps);
-
     //     if(nextKeys.length !== Object.keys(prevProps).length){
     //         return true
     //     }
-
     //     for(let i =0 ;i<nextKeys.length;i++){
     //         const key =nextKeys[i];
     //         if(nextProps[key]!== prevProps[key]){
@@ -110,7 +128,40 @@ export function createRenderer(options) {
     //     }
     //     return false
     // }
+    function patchChildren(n1, n2, container, parentComponent) {
+        const prevShapeFlag = n1.shapeFlag;
+        const c1 = n1.children;
+        const { shapeFlag } = n2;
+        const c2 = n2.children;
+        if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+            if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+                // 除移旧子节点
+                unmountChildren(n1.children)
+            }
+            //设置新的string节点
+            if (c1 !== c2) {
+                hotSetElementText(container, c2)
+            }
 
+        } else {
+            if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+                hotSetElementText(container, "");
+                mountChildren(n2.children, container, parentComponent)
+            } else {
+                // Array 更新成 Array
+                // 需要用到 Diff 算法提高性能
+            }
+
+        }
+    }
+
+    function unmountChildren(children) {
+        for (let i = 0; i < children.length; i++) {
+            const el = children[i].el;
+            hotRemove(el)
+        }
+
+    }
     function mountElement(vnode: any, container: any, parentComponent) {
 
         // const el = (vnode.el = document.createElement(vnode.type))
@@ -121,7 +172,7 @@ export function createRenderer(options) {
 
             el.textContent = children;
         } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-            mountChildren(vnode, el, parentComponent)
+            mountChildren(vnode.children, el, parentComponent)
 
         }
         // props
@@ -137,15 +188,15 @@ export function createRenderer(options) {
             //     el.setAttribute(key, val);
             // }
 
-            hotPatchProp(el, key, null,val);
+            hotPatchProp(el, key, null, val);
         }
 
         // container.append(el)
         insert(el, container);
     }
-    function mountChildren(vnode, container, parentComponent) {
-        vnode.children.forEach((v) => {
-            patch(null,v, container, parentComponent)
+    function mountChildren(children, container, parentComponent) {
+        children.forEach((v) => {
+            patch(null, v, container, parentComponent)
         })
     }
 
